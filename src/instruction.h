@@ -4,12 +4,13 @@
 #include <stdbool.h>
 #define MAX_THREADS 2
 
-bool locks[MAX_THREADS] = {false};
+int lock = -1;
 
 typedef enum{
     STEP_LOAD,
     STEP_STORE,
     STEP_SUBGROUP_BARRIER,
+    STEP_ATOMIC_EXCHANGE,
 } step;
 
 typedef struct Label{
@@ -18,8 +19,8 @@ typedef struct Label{
 } Label;
 
 typedef struct Thread{
-    Label metadata;
-    step instructions[10];
+    //Label metadata;
+    step* instructions;
     int instruction_count;
     int pc;
     bool terminated;
@@ -45,6 +46,8 @@ void acquire_lock(int threadidx){
     }
 }
 
-void atomic_exchange(){
-    // Simulate atomic exchange
+// assume HSA
+void atomic_exchange(int threadidx){
+    _CPROVER_assume(threadidx < MAX_THREADS);
+
 }
