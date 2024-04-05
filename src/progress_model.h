@@ -2,12 +2,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <unistd.h>
 #include "instruction.h"
 
-pthread_mutex_t lock;
-pthread_cond_t cond;
 
 typedef struct Scheduler{
     Thread* threads; // Dynamic array of Thread structures

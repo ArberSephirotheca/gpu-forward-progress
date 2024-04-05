@@ -1,22 +1,15 @@
 #include<assert.h>
 #include <stdio.h>
-#include "hsa.h"
-
+#include "instruction.h"
+#include "progress_model.h"
 
 
 int main() {
-    
+    Scheduler scheduler = {};
     for (;nondet_int();){
         int thread_id = nondet_int();
         __CPROVER_assume(thread_id >= 0 && thread_id < MAX_THREADS);
-        switch (nondet_step()){
-            case STEP_LOAD:
-                printf("Load\n");
-            break;
-            default:
-                printf("Default\n");
-                break;
-        }
+
     }
     /*
 
