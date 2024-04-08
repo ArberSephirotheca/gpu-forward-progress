@@ -6,5 +6,5 @@
 - [Earthly](https://earthly.dev/get-earthly)
 ## Get Started
 ```bash
-earthly +build --model '<model>'
+earthly +build --model '<model>' (currently only support HSA and OBE)
 ```
