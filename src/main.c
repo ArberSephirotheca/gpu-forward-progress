@@ -1,25 +1,40 @@
 #include<assert.h>
 #include <stdio.h>
-#include "instruction.h"
 #include "progress_model.h"
 
 
 int main() {
     Scheduler scheduler = {};
-    for (;nondet_int();){
+    Thread thread1, thread2;
+    step instructions1[] = {STEP_LOCK_ACQUIRE, STEP_STORE, STEP_LOCK_RELEASE};
+    thread1.instructions = instructions1;
+    thread1.instruction_count = 3;
+    thread1.pc = 0;
+    thread1.terminated = false;
+
+    step instructions2[] = {STEP_LOCK_ACQUIRE, STEP_STORE, STEP_LOCK_RELEASE};
+    thread2.instructions = instructions2;
+    thread2.instruction_count = 3;
+    thread2.pc = 0;
+    thread2.terminated = false;
+
+    Thread threads[] = {thread1, thread2};
+
+    scheduler.threads = threads;
+    scheduler.thread_count = 2;
+    scheduler.fair_execution_bits = 0;
+    scheduler.terminated_thread_counts = 0;
+    scheduler.unfair_thread_bits = 0;
+    
+    int num_steps = nondet_int();
+    __CPROVER_assume(num_steps > thread1.instruction_count + thread2.instruction_count);
+    for(int i = 0; i < num_steps; ++ i){
         int thread_id = nondet_int();
-        __CPROVER_assume(thread_id >= 0 && thread_id < MAX_THREADS);
-
+        // resricting thread_id to be within the range of thread_count and not terminated
+        __CPROVER_assume(thread_id >= 0 && thread_id < scheduler.thread_count && scheduler.threads[thread_id].terminated == false);
+        hsa_execute_step(&scheduler, thread_id);
     }
-    /*
+    __CPROVER_assert(scheduler.unfair_thread_bits == 0, "Has unfair threads");
 
-    // Spawn threads to simulate concurrent execution
-    __CPROVER_ASYNC_1: thread_function(0);
-    __CPROVER_ASYNC_2: thread_function(1);
-    */
-    // Verification conditions can include checking that all resources were eventually acquired
-    //for(int i = 0; i < 2; ++i) {
-       // assert(resource == false); // Ensure all resources are released at the end
-    //}
-    return 0;
+    return EXIT_SUCCESS;
 }
