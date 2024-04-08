@@ -275,3 +275,13 @@ void obe_execute_step(Scheduler* scheduler, int thread_id){
         unfair_thread_set_remove(scheduler, thread_id);
     }
 }
+
+void execute_step(Scheduler* scheduler, int thread_id){
+    #ifdef HSA
+    hsa_execute_step(scheduler, thread_id);
+    #elif OBE
+    obe_execute_step(scheduler, thread_id);
+    #else
+    hsa_execute_step(scheduler, thread_id);
+    #endif
+}

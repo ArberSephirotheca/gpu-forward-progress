@@ -32,8 +32,7 @@ int main() {
         int thread_id = nondet_int();
         // resricting thread_id to be within the range of thread_count and not terminated
         __CPROVER_assume(thread_id >= 0 && thread_id < scheduler.thread_count && scheduler.threads[thread_id].terminated == false);
-        //hsa_execute_step(&scheduler, thread_id);
-        obe_execute_step(&scheduler, thread_id);
+        execute_step(&scheduler, thread_id);
     }
     // deadlock
     __CPROVER_assert(scheduler.unfair_thread_bits == 0, "Deadlock detected");
