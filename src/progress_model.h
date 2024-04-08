@@ -209,6 +209,7 @@ void hsa_execute_step(Scheduler* scheduler, int thread_id){
             int lowest_id = all_threads_lowest_id(scheduler);
             if (lowest_id != -1){
                 fair_execution_set_insert(scheduler, lowest_id);
+                unfair_thread_set_remove(scheduler, lowest_id);
             }
         }
     }
