@@ -11,6 +11,6 @@ build:
     WORKDIR /workdir
 
     COPY src src
-    RUN cbmc src/main.c -unwind 500  --unwinding-assertions > output.txt 2>&1 || true
-
+    RUN cbmc src/main.c --unwind 50 --trace > output.txt 2>&1 || true
+#--unwinding-assertions --cover assume 
     SAVE ARTIFACT output.txt AS LOCAL ./build/
