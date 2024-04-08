@@ -6,5 +6,5 @@
 - [Earthly](https://earthly.dev/get-earthly)
 ## Get Started
 ```bash
-earthly +build
+earthly +build --model '<model>'
 ```
