@@ -55,7 +55,18 @@ step nondet_step(); // generate a non-deterministic step
 
 bool nondet_bool();
 
+bool all_threads_terminated(Scheduler* scheduler){
+    return scheduler->terminated_thread_counts == scheduler->thread_count;
+}
 
+int all_threads_lowest_id(Scheduler* scheduler){
+    for (int i = 0; i < scheduler->thread_count; ++i){
+        if (scheduler->threads[i].terminated == false){
+            return i;
+        }
+    }
+    return -1;
+}
 bool fair_execution_set_contains(Scheduler* scheduler, int thread_id){
     return scheduler->fair_execution_bits & (1 << thread_id);
 }
@@ -89,9 +100,6 @@ int fair_execution_set_lowest_id(Scheduler* scheduler){
         }
     }
     return -1;
-}
-bool all_threads_terminated(Scheduler* scheduler){
-    return scheduler->terminated_thread_counts == scheduler->thread_count;
 }
 
 bool unfair_thread_set_contains(Scheduler* scheduler, int thread_id){
@@ -192,13 +200,16 @@ void hsa_execute_step(Scheduler* scheduler, int thread_id){
 
 
     // check if thread has terminated, and remove from fair execution set
+    // update fair execution set
     if (thread->pc == thread->instruction_count){
         thread->terminated = true;
         scheduler->terminated_thread_counts += 1;
-        //scheduler->terminated_threads |= 1 << thread_id;
         if (fair_execution_set_contains(scheduler, thread_id)){
             fair_execution_set_remove(scheduler, thread_id);
-           // unfair_thread_set_remove(scheduler, thread_id);
+            int lowest_id = all_threads_lowest_id(scheduler);
+            if (lowest_id != -1){
+                fair_execution_set_insert(scheduler, lowest_id);
+            }
         }
     }
     // insert to the fair execution set if is the lowest thread id
